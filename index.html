@@ -1,1 +1,2347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hank Green</title>
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-0578044100560991"
+     crossorigin="anonymous"></script>
+<style>
+  /* ===== RESET & BASE ===== */
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg:          #FFFAF5;
+    --text:        #2A2018;
+    --text-light:  #5A4A3A;
+    --orange:      #F05A00;
+    --orange-hover:#FF7A30;
+    --orange-dark: #C84800;
+    /* Depth palette: warm → golden → rose → lavender → teal → deep */
+    --fn-bg-1:     #FFF3EA;  /* warm cream */
+    --fn-bg-2:     #FFE4CC;  /* peach */
+    --fn-bg-3:     #FFF2D1;  /* soft gold */
+    --fn-bg-4:     #FFE0E4;  /* blush rose */
+    --fn-bg-5:     #E8DFF5;  /* lavender */
+    --fn-bg-6:     #D5EBE6;  /* cool mint */
+    --fn-bg-7:     #2D2A3A;  /* deep slate */
+  }
+
+  html {
+    font-size: 18px;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: Georgia, 'Times New Roman', 'Palatino Linotype', serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.75;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ===== SITE PHOTO (bottom-right) ===== */
+  .site-photo {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    max-height: 95vh;
+    width: auto;
+    max-width: 48vw;
+    z-index: 0;
+    pointer-events: none;
+    user-select: none;
+    opacity: 1;
+  }
+  .bg-image {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    width: 480px;
+    max-width: 45vw;
+    opacity: 0.32;
+    pointer-events: none;
+    z-index: 0;
+    user-select: none;
+  }
+  .bg-glow {
+    display: none;
+  }
+
+  /* ===== CONTENT AREA ===== */
+  .content {
+    position: relative;
+    z-index: 1;
+    max-width: 620px;
+    padding: 6rem 2rem 8rem;
+    margin: 0 auto;
+  }
+  @media (min-width: 1100px) {
+    .content {
+      margin-left: max(8%, calc(50% - 480px));
+    }
+    .featured-box {
+      position: absolute;
+      left: calc(100% + 2.5rem);
+      top: 6rem; /* default, overridden by JS to align with first paragraph */
+      width: 250px;
+      margin-bottom: 0;
+    }
+    .accolades-btn {
+      margin-bottom: 0.6rem;
+    }
+  }
+
+  /* ===== MOBILE HERO HEADING ===== */
+  .mobile-hero {
+    display: none;
+  }
+  @media (max-width: 600px) {
+    .mobile-hero {
+      display: block;
+      font-family: Georgia, 'Times New Roman', 'Palatino Linotype', serif;
+      font-size: 2.2rem;
+      font-weight: 700;
+      line-height: 1.15;
+      color: var(--text);
+      margin-bottom: 1.2rem;
+    }
+    .mobile-hero .fn-ref { font-size: inherit; }
+    .mobile-hero .fn-num { font-size: 0.35em; }
+    .greeting-inline { display: none; }
+  }
+
+  /* ===== PARAGRAPHS ===== */
+  .paragraph-block {
+    margin-bottom: 1.6rem;
+  }
+  .paragraph-block p {
+    text-indent: 0;
+  }
+
+  /* ===== FOOTNOTE REFERENCES ===== */
+  .fn-ref {
+    cursor: pointer;
+    position: relative;
+    transition: color 0.15s;
+  }
+  .fn-ref:hover { color: var(--orange); }
+  .fn-ref.active { color: var(--orange); }
+  .fn-ref[data-fn="name"] { color: var(--orange); font-weight: 600; }
+
+  .fn-num {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    font-size: 0.6em;
+    font-weight: 700;
+    color: var(--orange);
+    margin-left: 1px;
+    vertical-align: super;
+    line-height: 1;
+    transition: color 0.15s, transform 0.15s;
+    display: inline-block;
+  }
+  .fn-ref:hover .fn-num {
+    color: var(--orange-hover);
+    transform: scale(1.15);
+  }
+
+  /* ===== POPOVER BUBBLES ===== */
+  .fn-popover {
+    position: absolute;
+    width: 380px;
+    max-height: 340px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    border-radius: 12px;
+    border: 1px solid rgba(42,32,24,0.08);
+    box-shadow: 0 8px 32px rgba(42,32,24,0.16), 0 2px 8px rgba(42,32,24,0.08);
+    padding: 0;
+    animation: popIn 0.2s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  .fn-popover.closing {
+    opacity: 0;
+    transform: scale(0.94);
+    transition: opacity 0.15s ease, transform 0.15s ease;
+    pointer-events: none;
+  }
+  .fn-popover.depth-1 { background: var(--fn-bg-1); }
+  .fn-popover.depth-2 { background: var(--fn-bg-2); }
+  .fn-popover.depth-3 { background: var(--fn-bg-3); }
+  .fn-popover.depth-4 { background: var(--fn-bg-4); }
+  .fn-popover.depth-5 { background: var(--fn-bg-5); }
+  .fn-popover.depth-6 { background: var(--fn-bg-6); }
+  .fn-popover.depth-7 {
+    background: var(--fn-bg-7);
+    border-color: rgba(255,255,255,0.1);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.3), 0 2px 10px rgba(0,0,0,0.15);
+  }
+  .fn-popover.depth-7 .fn-pop-header { border-bottom-color: rgba(255,255,255,0.08); }
+  .fn-popover.depth-7 .fn-label { color: #C4B0F0; background: rgba(160,130,220,0.2); }
+  .fn-popover.depth-7 .fn-close { color: #C4B0F0; }
+  .fn-popover.depth-7 .fn-close:hover { background: #C4B0F0; color: var(--fn-bg-7); }
+  .fn-popover.depth-7 .fn-pop-body { color: #E8E4F0; }
+  .fn-popover.depth-7 .fn-pop-body a { color: #A8D0C8; }
+  .fn-popover.depth-7 .fn-pop-body a:hover { color: #C8F0E8; }
+  .fn-popover.depth-7 .fn-arrow { border-color: rgba(255,255,255,0.1); }
+  .fn-popover.depth-7 .fn-ref { color: #E8E4F0; }
+  .fn-popover.depth-7 .fn-ref:hover { color: #C4B0F0; }
+  .fn-popover.depth-7 .fn-num { color: #C4B0F0; }
+
+  .fn-pop-body::-webkit-scrollbar { width: 5px; }
+  .fn-pop-body::-webkit-scrollbar-thumb { background: rgba(240,90,0,0.25); border-radius: 3px; }
+  .fn-pop-body::-webkit-scrollbar-track { background: transparent; }
+
+  @keyframes popIn {
+    from { opacity: 0; transform: scale(0.9); }
+    to   { opacity: 1; transform: scale(1); }
+  }
+
+  /* Arrow */
+  .fn-arrow {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    background: inherit;
+    border: 1px solid rgba(42,32,24,0.08);
+    transform: rotate(45deg);
+    z-index: -1;
+  }
+  .fn-arrow.arrow-down {
+    bottom: -7px;
+    border-top: none;
+    border-left: none;
+    box-shadow: 3px 3px 4px rgba(42,32,24,0.06);
+  }
+  .fn-arrow.arrow-up {
+    top: -7px;
+    border-bottom: none;
+    border-right: none;
+    box-shadow: -1px -1px 3px rgba(42,32,24,0.04);
+  }
+
+  /* Popover header & body */
+  .fn-pop-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.55rem 0.8rem 0.35rem;
+    border-bottom: 1px solid rgba(42,32,24,0.06);
+    background: inherit;
+    border-radius: 12px 12px 0 0;
+    z-index: 1;
+    flex-shrink: 0;
+  }
+  .fn-label {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: var(--orange);
+    background: rgba(240,90,0,0.1);
+    padding: 0.08rem 0.4rem;
+    border-radius: 3px;
+    letter-spacing: 0.03em;
+  }
+  .fn-close {
+    background: none;
+    border: none;
+    color: var(--orange);
+    font-size: 1.2rem;
+    font-weight: 700;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0.1rem 0.3rem;
+    border-radius: 4px;
+    transition: background 0.12s, color 0.12s;
+  }
+  .fn-close:hover {
+    background: var(--orange);
+    color: #fff;
+  }
+
+  .fn-pop-body {
+    padding: 0.55rem 0.85rem 0.75rem;
+    font-size: 0.88rem;
+    line-height: 1.6;
+    color: var(--text);
+    overflow-y: auto;
+    flex: 1;
+    min-height: 0;
+    overscroll-behavior: contain;
+  }
+  .fn-pop-body a {
+    color: var(--orange-dark);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    transition: color 0.12s;
+  }
+  .fn-pop-body a:hover { color: var(--orange); }
+  .fn-pop-body em { font-style: italic; }
+  .fn-pop-body img { max-width: 100%; margin: 0.4rem 0; border-radius: 4px; }
+
+  /* ===== MOBILE ===== */
+  @media (max-width: 600px) {
+    html { font-size: 16px; }
+    .content { padding: 2.5rem 1.3rem 4rem; }
+    .bg-image { display: none; }
+    .site-photo { display: none; }
+    .socials-row { margin-top: 2rem; justify-content: center; }
+    .featured-box { font-size: 0.85rem; margin-top: 2rem; margin-bottom: 0; }
+    .achv-toast { max-width: 260px; }
+    .socials-panel {
+      left: auto;
+      right: 0;
+      min-width: 0;
+      max-width: 80vw;
+    }
+
+    .fn-popover {
+      width: min(340px, 90vw);
+    }
+    .fn-ref {
+      padding: 2px 1px;
+    }
+    .fn-num {
+      font-size: 0.7em;
+      padding: 4px 2px;
+    }
+  }
+
+  /* ===== SOCIALS BUTTON & PANEL ===== */
+  .socials-row {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-top: 2.5rem;
+  }
+  .socials-wrap {
+    position: relative;
+    display: inline-block;
+  }
+  .socials-btn {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: var(--text-light);
+    background: rgba(240,90,0,0.05);
+    border: none;
+    border-radius: 6px;
+    padding: 0.3rem 0.55rem;
+    cursor: pointer;
+    letter-spacing: 0.01em;
+    transition: color 0.15s, background 0.15s;
+  }
+  .socials-btn:hover { color: var(--orange); background: rgba(240,90,0,0.10); }
+  .socials-btn:active { transform: scale(0.97); }
+  .socials-btn.open { background: rgba(240,90,0,0.14); }
+  .socials-panel {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 0;
+    background: var(--bg);
+    border: 1px solid rgba(42,32,24,0.1);
+    border-radius: 10px;
+    box-shadow: 0 6px 24px rgba(42,32,24,0.15);
+    padding: 0.5rem 0;
+    min-width: 200px;
+    z-index: 10;
+    animation: panelIn 0.2s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  @keyframes panelIn {
+    from { opacity: 0; transform: translateY(6px) scale(0.95); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  .socials-panel a {
+    display: block;
+    padding: 0.3rem 0.85rem;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--text);
+    text-decoration: none;
+    transition: background 0.12s, color 0.12s;
+    white-space: nowrap;
+  }
+  .socials-panel a:hover {
+    background: rgba(240,90,0,0.07);
+    color: var(--orange);
+  }
+
+  /* ===== FEATURED BOX ===== */
+  .featured-box {
+    background: rgba(240,90,0,0.04);
+    border: 1px solid rgba(240,90,0,0.10);
+    border-radius: 12px;
+    padding: 1rem 1.2rem 1.1rem;
+    margin-bottom: 2rem;
+    font-size: 0.84rem;
+    line-height: 1.55;
+  }
+  .featured-label {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    font-size: 0.55rem;
+    font-weight: 700;
+    color: var(--orange);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    display: block;
+    margin-bottom: 0.6rem;
+  }
+  .featured-item {
+    margin-bottom: 0.9rem;
+    padding-bottom: 0.9rem;
+    border-bottom: 1px solid rgba(240,90,0,0.08);
+  }
+  .featured-item:last-of-type {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+  }
+  .featured-item-img {
+    width: 100%;
+    border-radius: 6px;
+    margin-bottom: 0.5rem;
+    display: block;
+  }
+  .featured-item-title {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 0.2rem;
+    line-height: 1.3;
+  }
+  .featured-item-text {
+    color: var(--text-light);
+    font-size: 0.78rem;
+    line-height: 1.5;
+    margin-bottom: 0.35rem;
+  }
+  .featured-item-cta {
+    display: inline-block;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--orange);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(240,90,0,0.25);
+    transition: color 0.15s;
+    padding-bottom: 1px;
+  }
+  .featured-item-cta:hover {
+    color: var(--orange-hover);
+  }
+  .featured-box a {
+    color: var(--orange-dark);
+    font-weight: 600;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(200,72,0,0.25);
+    transition: color 0.15s;
+  }
+  .featured-box a:hover {
+    color: var(--orange);
+  }
+  .newsletter-link {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    font-size: 0.7rem;
+    line-height: 1.5;
+    color: var(--text-light);
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px dashed rgba(240,90,0,0.15);
+  }
+  .newsletter-link a {
+    color: var(--orange);
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+  .newsletter-link a:hover {
+    color: var(--orange-hover);
+  }
+
+  /* ===== LITTLE TOUCHES ===== */
+  ::selection { background: rgba(240,90,0,0.2); }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Subtle scrim when popovers are open */
+  .popover-scrim {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(42,32,24,0.06);
+    z-index: 49;
+    transition: opacity 0.2s;
+  }
+  .popover-scrim.active {
+    display: block;
+  }
+
+  /* ===== EASTER EGG GAME ===== */
+  .game-sprite {
+    position: fixed;
+    z-index: 1000;
+    cursor: pointer;
+    user-select: none;
+    opacity: 0.82;
+    border-radius: 8px;
+    transition: transform 0.15s ease;
+  }
+  .game-sprite:hover {
+    transform: scale(1.12);
+    opacity: 1;
+  }
+  .game-toast {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%) scale(0.8);
+    background: #2A2018;
+    color: #fff;
+    padding: 1rem 2rem;
+    border-radius: 12px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    z-index: 1001;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    opacity: 0;
+    animation: gameToastIn 0.4s ease forwards;
+  }
+  @keyframes gameToastIn {
+    to { opacity: 1; transform: translate(-50%,-50%) scale(1); }
+  }
+
+  /* ===== ACHIEVEMENTS ===== */
+  .achv-toast {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #2A2018;
+    color: #fff;
+    border-radius: 12px;
+    padding: 0.75rem 1.3rem 0.7rem;
+    z-index: 9000;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    max-width: 320px;
+    pointer-events: none;
+    text-align: center;
+    animation: achvIn 0.35s cubic-bezier(0.34,1.56,0.64,1) forwards;
+    overflow: visible;
+  }
+  .achv-toast.out {
+    animation: achvOut 0.4s ease forwards;
+  }
+  .achv-title {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--orange-hover);
+    display: inline;
+    vertical-align: middle;
+  }
+  .achv-desc {
+    font-size: 0.72rem;
+    color: rgba(255,255,255,0.7);
+    margin-top: 0.2rem;
+    line-height: 1.45;
+  }
+  @keyframes achvIn {
+    from { opacity: 0; transform: translate(-50%, -50%) scale(0.85); }
+    to   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  }
+  @keyframes achvOut {
+    from { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    to   { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
+  }
+  .confetti-piece {
+    position: fixed;
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+    z-index: 9001;
+    pointer-events: none;
+  }
+
+  /* ===== META CELEBRATION ===== */
+  @keyframes pageDance {
+    0%   { transform: rotate(0deg) translateX(0); }
+    10%  { transform: rotate(-2deg) translateX(-8px); }
+    20%  { transform: rotate(2deg) translateX(8px); }
+    30%  { transform: rotate(-1.5deg) translateX(-5px) translateY(-3px); }
+    40%  { transform: rotate(1.5deg) translateX(5px) translateY(3px); }
+    50%  { transform: rotate(-2.5deg) translateX(-6px); }
+    60%  { transform: rotate(2.5deg) translateX(6px); }
+    70%  { transform: rotate(-1deg) translateX(-4px) translateY(-2px); }
+    80%  { transform: rotate(1deg) translateX(4px) translateY(2px); }
+    90%  { transform: rotate(-0.5deg) translateX(-2px); }
+    100% { transform: rotate(0deg) translateX(0); }
+  }
+  body.dancing .content,
+  body.dancing .featured-box,
+  body.dancing .geo-toggle,
+  body.dancing .site-photo {
+    animation: pageDance 0.6s ease-in-out infinite;
+  }
+  body.dancing .featured-box { animation-delay: 0.1s; }
+  body.dancing .geo-toggle { animation-delay: 0.2s; }
+  .bean {
+    position: fixed;
+    z-index: 8999;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  /* ===== ACHIEVEMENT TRACKER ===== */
+  .achv-tracker {
+    display: none;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    margin-top: 1rem;
+  }
+  .achv-tracker.visible {
+    display: flex;
+  }
+  .achv-slot {
+    position: relative;
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 5px;
+    background: rgba(240,90,0,0.06);
+    border: 1px solid rgba(240,90,0,0.2);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    transition: transform 0.2s;
+    cursor: default;
+  }
+  .achv-slot.unlocked {
+    display: flex;
+  }
+  .achv-slot:hover { transform: scale(1.15); }
+
+  /* ===== PALM TREE / GEOCITIES MODE ===== */
+  .geo-toggle {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 9999;
+    background: none;
+    border: none;
+    font-size: 1.6rem;
+    cursor: pointer;
+    opacity: 0.55;
+    transition: opacity 0.2s, transform 0.2s;
+    padding: 0.3rem;
+    line-height: 1;
+  }
+  .geo-toggle:hover { opacity: 1; transform: scale(1.15) rotate(-10deg); }
+  body.geocities .geo-toggle { opacity: 1; }
+
+  body.geocities {
+    --bg: #000033;
+    --text: #00ff00;
+    --text-light: #00cc00;
+    --orange: #ffff00;
+    --orange-hover: #ff00ff;
+    --orange-dark: #ff6600;
+    --fn-bg-1: #ffff00;
+    --fn-bg-2: #ff69b4;
+    --fn-bg-3: #00ffff;
+    --fn-bg-4: #00ff00;
+    --fn-bg-5: #ff8c00;
+    --fn-bg-6: #da70d6;
+    --fn-bg-7: #ff0000;
+    background-color: #000033;
+    background-image:
+      radial-gradient(circle at 15% 25%, #fff 0.5px, transparent 0.5px),
+      radial-gradient(circle at 35% 65%, #aaf 0.5px, transparent 0.5px),
+      radial-gradient(circle at 55% 15%, #fff 0.7px, transparent 0.7px),
+      radial-gradient(circle at 75% 45%, #ccf 0.5px, transparent 0.5px),
+      radial-gradient(circle at 90% 80%, #fff 0.6px, transparent 0.6px),
+      radial-gradient(circle at 45% 85%, #aaf 0.4px, transparent 0.4px),
+      radial-gradient(circle at 8% 70%, #fff 0.5px, transparent 0.5px),
+      radial-gradient(circle at 65% 35%, #ccf 0.6px, transparent 0.6px);
+    background-size: 250px 250px;
+    font-family: 'Comic Sans MS', 'Comic Sans', 'Chalkboard SE', cursive;
+  }
+
+  body.geocities .site-photo {
+    image-rendering: pixelated;
+    border: 3px solid #ff00ff;
+    border-radius: 0;
+    opacity: 0.6;
+  }
+
+  body.geocities .fn-num {
+    animation: geoBlink 1s step-end infinite;
+    color: #ff0000;
+  }
+
+  body.geocities .fn-popover {
+    border: 3px outset #999;
+    border-radius: 0;
+    box-shadow: 5px 5px 0 rgba(0,0,0,0.5);
+    font-family: 'Comic Sans MS', cursive;
+  }
+  body.geocities .fn-popover .fn-pop-header { border-radius: 0; }
+  body.geocities .fn-popover .fn-pop-body { color: #000; }
+  body.geocities .fn-popover .fn-pop-body a { color: #0000EE; text-decoration: underline; }
+  body.geocities .fn-popover .fn-pop-body a:hover { color: #ff00ff; }
+  body.geocities .fn-popover .fn-label {
+    background: #000; color: #0f0; font-family: 'Courier New', monospace; border-radius: 0;
+  }
+  body.geocities .fn-popover .fn-close:hover { background: #ff0000; color: #fff; }
+  body.geocities .fn-popover .fn-arrow { display: none; }
+  body.geocities .fn-popover.depth-7 .fn-pop-body { color: #ffff00; }
+  body.geocities .fn-popover.depth-7 .fn-label { background: #800000; color: #ffff00; }
+
+  body.geocities .featured-box {
+    background: #000066; border: 2px outset #888; border-radius: 0; color: #00ffff;
+  }
+  body.geocities .featured-label { color: #ff00ff; }
+  body.geocities .featured-item { border-bottom-color: #333399; }
+  body.geocities .featured-item-title { color: #ffff00; }
+  body.geocities .featured-item-text { color: #00ffff; }
+  body.geocities .featured-item-cta { color: #00ff00; border-bottom-color: #00ff00; }
+  body.geocities .featured-box a { color: #ffff00; border-bottom-color: #ffff00; }
+
+  body.geocities .socials-btn { background: #000066; border: 2px outset #888; border-radius: 0; color: #00ffff; font-family: 'Comic Sans MS', cursive; }
+  body.geocities .socials-btn:hover { background: #000099; }
+  body.geocities .socials-panel { background: #000066; border: 2px outset #888; border-radius: 0; }
+  body.geocities .socials-panel a { color: #00ffff; font-family: 'Comic Sans MS', cursive; }
+  body.geocities .socials-panel a:hover { background: #000033; color: #ff00ff; }
+
+  body.geocities ::selection { background: #ff00ff; color: #fff; }
+
+  .geo-marquee {
+    position: fixed; top: 0; left: 0; right: 0;
+    background: linear-gradient(90deg, #ff0000, #ff8800, #ffff00, #00ff00, #0088ff, #8800ff, #ff0000);
+    color: #fff; text-shadow: 1px 1px 0 #000;
+    font-family: 'Comic Sans MS', cursive; font-size: 0.85rem; font-weight: 700;
+    padding: 0.3rem 0; z-index: 9998; overflow: hidden; white-space: nowrap;
+  }
+  .geo-marquee span {
+    display: inline-block; padding-left: 100%;
+    animation: geoScroll 14s linear infinite;
+  }
+  @keyframes geoScroll {
+    from { transform: translateX(0); }
+    to { transform: translateX(-100%); }
+  }
+
+  .geo-counter {
+    position: fixed; bottom: 1rem; left: 50%; transform: translateX(-50%);
+    font-family: 'Comic Sans MS', cursive; font-size: 0.75rem; color: #888;
+    z-index: 9998; text-align: center;
+  }
+  .geo-counter .counter-num {
+    font-family: 'Courier New', monospace; background: #000; color: #0f0;
+    padding: 0.15rem 0.5rem; border: 1px inset #555; letter-spacing: 2px;
+  }
+  .geo-counter a { color: #00ccff; }
+
+  .geo-construction {
+    text-align: center; color: #ffff00; font-size: 0.85rem; font-weight: 700;
+    padding: 0.5rem; font-family: 'Comic Sans MS', cursive;
+    animation: geoBlink 1s step-end infinite;
+  }
+  @keyframes geoBlink {
+    0%, 49% { opacity: 1; }
+    50%, 100% { opacity: 0; }
+  }
+
+  /* Guestbook */
+  .geo-gb-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,51,0.7); z-index: 10000;
+    align-items: center; justify-content: center;
+  }
+  .geo-gb-overlay.active { display: flex; }
+  .geo-gb-popup {
+    background: #c0c0c0; border: 3px outset #fff;
+    width: 420px; max-width: 92vw; max-height: 80vh;
+    display: flex; flex-direction: column;
+    font-family: 'Comic Sans MS', cursive; font-size: 0.82rem;
+  }
+  .geo-gb-titlebar {
+    background: linear-gradient(90deg, #000080, #1084d0);
+    color: #fff; font-weight: 700; font-size: 0.78rem;
+    padding: 3px 6px; display: flex; align-items: center; justify-content: space-between;
+  }
+  .geo-gb-close {
+    background: #c0c0c0; border: 2px outset #fff;
+    font-size: 0.7rem; font-weight: 700; cursor: pointer;
+    padding: 0 4px; line-height: 1.3; color: #000;
+  }
+  .geo-gb-body { padding: 0.6rem; overflow-y: auto; flex: 1; }
+  .geo-gb-entry {
+    border-bottom: 1px solid #999; padding: 0.4rem 0; color: #000;
+  }
+  .geo-gb-entry .gb-name { color: #0000EE; font-weight: 700; }
+  .geo-gb-entry .gb-date { color: #666; font-size: 0.7rem; }
+  .geo-gb-entry .gb-msg { margin-top: 2px; }
+  .geo-gb-form { border-top: 2px inset #999; padding: 0.5rem; background: #d4d0c8; }
+  .geo-gb-form label { display: block; font-weight: 700; font-size: 0.72rem; margin-top: 0.3rem; color: #000; }
+  .geo-gb-form input, .geo-gb-form textarea {
+    width: 100%; border: 2px inset #888; padding: 3px 5px;
+    font-family: 'Comic Sans MS', cursive; font-size: 0.8rem; background: #fff;
+  }
+  .geo-gb-form textarea { height: 45px; resize: none; }
+  .geo-gb-form button {
+    margin-top: 0.4rem; background: #c0c0c0; border: 2px outset #fff;
+    padding: 3px 16px; font-family: 'Comic Sans MS', cursive;
+    font-weight: 700; cursor: pointer; font-size: 0.78rem;
+  }
+  .geo-gb-form button:active { border-style: inset; }
+  .geo-gb-thanks { padding: 0.5rem; text-align: center; color: #000; font-size: 0.78rem; line-height: 1.5; }
+  .geo-gb-thanks b { color: #ff00ff; }
+
+  @media (max-width: 600px) {
+    body.geocities .fn-popover { border-radius: 0 !important; }
+    body.geocities .fn-popover .fn-pop-header { border-radius: 0 !important; }
+  }
+
+  /* ===== CLASSIC MODE ===== */
+  body.classic {
+    --bg: #ffffff;
+    --text: #000000;
+    --text-light: #333333;
+    --orange: #0000EE;
+    --orange-hover: #0000EE;
+    --orange-dark: #551A8B;
+    --fn-bg-1: #ffffee;
+    --fn-bg-2: #eeffee;
+    --fn-bg-3: #eeeeff;
+    --fn-bg-4: #ffeeee;
+    --fn-bg-5: #fff0ee;
+    --fn-bg-6: #eeffff;
+    --fn-bg-7: #2A2A3A;
+  }
+  body.classic .fn-ref:hover { color: #0000EE; }
+  body.classic .fn-popover { border-radius: 0; border-color: #999; box-shadow: 2px 2px 4px rgba(0,0,0,0.2); }
+  body.classic .fn-popover .fn-pop-header { border-radius: 0; background: #ddd; }
+  body.classic .fn-popover .fn-label { color: #333; background: rgba(0,0,0,0.1); }
+  body.classic .fn-popover .fn-close { color: #333; }
+  body.classic .fn-popover .fn-close:hover { background: #cc0000; color: #fff; }
+  body.classic .fn-popover .fn-arrow { display: none; }
+  body.classic .fn-popover .fn-pop-body a { color: #0000EE; text-decoration: underline; }
+  body.classic .fn-popover .fn-pop-body a:hover { color: #cc0000; }
+  body.classic .socials-btn { border-radius: 0; border: 1px solid #999; background: #eee; color: #000; }
+  body.classic .socials-btn:hover { background: #ddd; color: #0000EE; }
+  body.classic .socials-btn.open { background: #ddd; }
+  body.classic .socials-panel { border-radius: 0; border: 1px solid #999; box-shadow: 2px 2px 4px rgba(0,0,0,0.15); }
+  body.classic .socials-panel a { color: #0000EE; }
+  body.classic .socials-panel a:hover { color: #cc0000; background: #ffffcc; }
+  body.classic .featured-box { border-radius: 0; border: 1px solid #ccc; background: #fafafa; }
+  body.classic .featured-label { color: #333; }
+  body.classic .featured-item-title { color: #000; }
+  body.classic .featured-item-text { color: #333; }
+  body.classic .featured-item-cta { color: #0000EE; border-bottom-color: #0000EE; }
+  body.classic .featured-box a { color: #0000EE; }
+  body.classic .newsletter-link a { color: #0000EE; }
+  body.classic .site-photo { filter: none; }
+  body.classic .bg-image { opacity: 0; }
+  body.classic .accolades-btn { border-radius: 0; border: 1px solid #999; color: #333; background: #eee; }
+  body.classic .accolades-btn:hover { color: #0000EE; border-color: #0000EE; }
+  body.classic .accolades-card { border-radius: 0; border: 1px solid #999; }
+  body.classic .accolades-title { color: #000; }
+  body.classic .accolades-detail { color: #333; }
+  body.classic .accolades-arrow { border-radius: 0; border: 1px solid #999; color: #333; }
+  body.classic .accolades-arrow:hover { color: #0000EE; border-color: #0000EE; }
+  body.classic .accolades-dot.active { background: #0000EE; }
+  body.classic .achv-toast { border-radius: 0; }
+  body.classic ::selection { background: #3366cc; color: #fff; }
+
+  .classic-toggle {
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    z-index: 9999;
+    background: none;
+    border: none;
+    font-family: -apple-system, system-ui, sans-serif;
+    font-size: 0.65rem;
+    cursor: pointer;
+    opacity: 0.35;
+    transition: opacity 0.2s;
+    padding: 0.25rem 0.4rem;
+    color: var(--text-light);
+  }
+  .classic-toggle:hover { opacity: 0.8; }
+  body.classic .classic-toggle { opacity: 0.7; color: #0000EE; }
+
+  /* ===== ACCOLADES SLIDESHOW ===== */
+  .accolades-btn {
+    display: inline-block;
+    margin-bottom: 1.2rem;
+    padding: 0.5rem 1.3rem;
+    background: rgba(240,90,0,0.03);
+    border: 1px dashed rgba(240,90,0,0.15);
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: rgba(90,74,58,0.45);
+    opacity: 0.7;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    transition: color 0.15s, border-color 0.15s, background 0.15s, opacity 0.15s;
+  }
+  .accolades-btn:hover {
+    color: var(--orange);
+    border-color: var(--orange);
+    background: rgba(240,90,0,0.10);
+    opacity: 1;
+  }
+
+  .accolades-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(42,32,24,0.55);
+    z-index: 8000;
+    align-items: center;
+    justify-content: center;
+    animation: accoladesFadeIn 0.25s ease;
+  }
+  .accolades-overlay.active {
+    display: flex;
+  }
+  @keyframes accoladesFadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  .accolades-card {
+    position: relative;
+    background: var(--bg);
+    border: 1px solid rgba(42,32,24,0.10);
+    border-radius: 14px;
+    box-shadow: 0 12px 48px rgba(42,32,24,0.20), 0 2px 10px rgba(42,32,24,0.08);
+    width: 420px;
+    max-width: 90vw;
+    padding: 2rem 2rem 1.5rem;
+    text-align: center;
+    user-select: none;
+    overflow: hidden;
+  }
+
+  .accolades-close {
+    position: absolute;
+    top: 0.6rem;
+    right: 0.7rem;
+    background: none;
+    border: none;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--text-light);
+    cursor: pointer;
+    padding: 0.15rem 0.4rem;
+    border-radius: 5px;
+    line-height: 1;
+    transition: background 0.12s, color 0.12s;
+  }
+  .accolades-close:hover {
+    background: rgba(240,90,0,0.10);
+    color: var(--orange);
+  }
+
+  .accolades-label {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    font-size: 0.58rem;
+    font-weight: 700;
+    color: var(--orange);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 1rem;
+    display: block;
+  }
+
+  .accolades-slide {
+    height: 180px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .accolades-year {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    font-size: 0.65rem;
+    font-weight: 600;
+    color: var(--orange);
+    background: rgba(240,90,0,0.08);
+    padding: 0.1rem 0.5rem;
+    border-radius: 10px;
+    margin-bottom: 0.65rem;
+    display: inline-block;
+  }
+
+  .accolades-title {
+    font-family: Georgia, 'Times New Roman', 'Palatino Linotype', serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.3;
+    margin-bottom: 0.5rem;
+  }
+
+  .accolades-detail {
+    font-family: Georgia, 'Times New Roman', 'Palatino Linotype', serif;
+    font-size: 0.85rem;
+    color: var(--text-light);
+    line-height: 1.55;
+    max-width: 340px;
+    margin: 0 auto;
+  }
+
+  .accolades-link {
+    display: inline-block;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--orange);
+    text-decoration: none;
+    margin-top: 0.6rem;
+    transition: color 0.15s;
+  }
+  .accolades-link:hover {
+    color: var(--orange-hover);
+  }
+  body.geocities .accolades-link { color: #00ff00; }
+  body.geocities .accolades-link:hover { color: #ff00ff; }
+
+  .accolades-nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-top: 1.3rem;
+  }
+
+  .accolades-arrow {
+    background: none;
+    border: 1px solid rgba(42,32,24,0.12);
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 0.85rem;
+    color: var(--text-light);
+    transition: border-color 0.15s, color 0.15s, background 0.15s;
+    flex-shrink: 0;
+  }
+  .accolades-arrow:hover {
+    border-color: var(--orange);
+    color: var(--orange);
+    background: rgba(240,90,0,0.05);
+  }
+
+  .accolades-dots {
+    display: flex;
+    gap: 0.35rem;
+    align-items: center;
+  }
+  .accolades-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(42,32,24,0.15);
+    transition: background 0.2s, transform 0.2s;
+    cursor: pointer;
+    border: none;
+    padding: 0;
+  }
+  .accolades-dot.active {
+    background: var(--orange);
+    transform: scale(1.3);
+  }
+  .accolades-dot:hover {
+    background: var(--orange-hover);
+  }
+
+  /* Slide transition */
+  .accolades-slide {
+    opacity: 1;
+    transform: translateX(0);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+  }
+  .accolades-slide.slide-out-left {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  .accolades-slide.slide-out-right {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  .accolades-slide.slide-in {
+    opacity: 0;
+    transform: translateX(0);
+  }
+
+  /* Geocities mode override */
+  body.geocities .accolades-card {
+    background: #000066;
+    border: 3px outset #888;
+    border-radius: 0;
+    box-shadow: 5px 5px 0 rgba(0,0,0,0.5);
+    color: #00ff00;
+  }
+  body.geocities .accolades-title { color: #ffff00; }
+  body.geocities .accolades-detail { color: #00ffff; }
+  body.geocities .accolades-year { background: #000033; color: #ff00ff; }
+  body.geocities .accolades-label { color: #ff00ff; }
+  body.geocities .accolades-close { color: #00ffff; }
+  body.geocities .accolades-close:hover { background: #ff0000; color: #fff; }
+  body.geocities .accolades-arrow { border-color: #333399; color: #00ffff; }
+  body.geocities .accolades-arrow:hover { border-color: #ff00ff; color: #ff00ff; background: #000033; }
+  body.geocities .accolades-dot { background: #333399; }
+  body.geocities .accolades-dot.active { background: #ff00ff; }
+  body.geocities .accolades-btn { background: #000066; border-color: #333399; color: #00ffff; border-radius: 0; }
+  body.geocities .accolades-btn:hover { color: #ff00ff; border-color: #ff00ff; }
+
+  @media (max-width: 600px) {
+    .accolades-card {
+      padding: 1.5rem 1.3rem 1.2rem;
+    }
+    .accolades-title {
+      font-size: 1.1rem;
+    }
+  }
+
+</style>
+</head>
+<body>
+
+<div class="bg-glow"></div>
+<div class="popover-scrim" id="scrim"></div>
+
+<main class="content" id="site-content"></main>
+
+
+<button class="geo-toggle" id="geo-toggle" title="Geocities mode"><img src="pelican.png" alt="" style="width:28px;height:28px;object-fit:contain;"></button>
+
+<script src="content.js"></script>
+
+<script>
+(function() {
+  'use strict';
+
+  const container = document.getElementById('site-content');
+  const scrim = document.getElementById('scrim');
+  const FN_REGEX = /\{\{fn:([^}]+)\}\}([\s\S]*?)\{\{\/fn\}\}/g;
+
+  // ── Footnote number assignment ──
+  // Each popup gets its own numbering (1, 2, 3...)
+  const fnNumbers = {};
+
+  function assignChildNumbers(text) {
+    const re = new RegExp(FN_REGEX.source, 'g');
+    let match;
+    let localCounter = 0;
+    while ((match = re.exec(text)) !== null) {
+      const id = match[1];
+      if (!fnNumbers[id]) {
+        fnNumbers[id] = ++localCounter;
+        const fn = siteContent.footnotes[id];
+        if (fn) assignChildNumbers(fn.content);
+      }
+    }
+  }
+  (function() {
+    let topCounter = 0;
+    siteContent.paragraphs.forEach(function(p) {
+      const re = new RegExp(FN_REGEX.source, 'g');
+      let match;
+      while ((match = re.exec(p.text)) !== null) {
+        const id = match[1];
+        if (!fnNumbers[id]) {
+          fnNumbers[id] = ++topCounter;
+          const fn = siteContent.footnotes[id];
+          if (fn) assignChildNumbers(fn.content);
+        }
+      }
+    });
+  })();
+
+  // ── HTML escape ──
+  function esc(s) {
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  // ── Parse markers into clickable refs ──
+  function parseMarkers(text, isHtml) {
+    if (!isHtml) {
+      var parts = [], lastIdx = 0;
+      var re = new RegExp(FN_REGEX.source, 'g'), m;
+      while ((m = re.exec(text)) !== null) {
+        if (m.index > lastIdx) parts.push(esc(text.slice(lastIdx, m.index)));
+        var id = m[1], display = esc(m[2]), num = fnNumbers[id] || '?';
+        parts.push('<span class="fn-ref" data-fn="' + id + '">' + display +
+          '<sup class="fn-num">' + num + '</sup></span>');
+        lastIdx = m.index + m[0].length;
+      }
+      if (lastIdx < text.length) parts.push(esc(text.slice(lastIdx)));
+      return parts.join('');
+    } else {
+      return text.replace(new RegExp(FN_REGEX.source, 'g'), function(_, id, display) {
+        var num = fnNumbers[id] || '?';
+        return '<span class="fn-ref" data-fn="' + id + '">' + display +
+          '<sup class="fn-num">' + num + '</sup></span>';
+      });
+    }
+  }
+
+  // ── Photo (bottom-right, or fallback to decorative bg) ──
+  (function() {
+    var src = siteContent.photo || null;
+    if (src) {
+      var img = document.createElement('img');
+      img.className = 'site-photo';
+      img.src = src;
+      img.alt = '';
+      img.onerror = function() { this.style.display = 'none'; };
+      document.body.appendChild(img);
+    } else {
+      // Fallback decorative bg image
+      var bg = document.createElement('img');
+      bg.className = 'bg-image';
+      bg.src = 'image.webp';
+      bg.alt = '';
+      bg.onerror = function() { this.style.display = 'none'; };
+      document.body.appendChild(bg);
+    }
+  })();
+
+  // ── Mobile hero heading ──
+  // Pull "Hello, I'm Hank." into a big heading for narrow screens
+  (function() {
+    var firstText = siteContent.paragraphs[0] && siteContent.paragraphs[0].text || '';
+    var greetMatch = firstText.match(/^(.*?\{\{fn:name\}\}.*?\{\{\/fn\}\}\.)\s*/);
+    if (greetMatch) {
+      var hero = document.createElement('h1');
+      hero.className = 'mobile-hero';
+      hero.innerHTML = parseMarkers(greetMatch[1], false);
+      container.appendChild(hero);
+    }
+  })();
+
+  // ── Build paragraphs ──
+  siteContent.paragraphs.forEach(function(p, idx) {
+    var block = document.createElement('div');
+    block.className = 'paragraph-block';
+    var para = document.createElement('p');
+    var text = p.text;
+    // On the first paragraph, wrap the greeting portion so we can hide it on mobile
+    if (idx === 0) {
+      var greetMatch = text.match(/^(.*?\{\{fn:name\}\}.*?\{\{\/fn\}\}\.)\s*/);
+      if (greetMatch) {
+        var greetHtml = parseMarkers(greetMatch[1], false);
+        var restHtml = parseMarkers(text.slice(greetMatch[0].length), false);
+        para.innerHTML = '<span class="greeting-inline">' + greetHtml + ' </span>' + restHtml;
+      } else {
+        para.innerHTML = parseMarkers(text, false);
+      }
+    } else {
+      para.innerHTML = parseMarkers(text, false);
+    }
+    block.appendChild(para);
+    container.appendChild(block);
+  });
+
+  // ── Featured box (optional) ──
+  // Supports both old format { text, link } and new format [{ title, text, cta, link, image }]
+  // Rendered after paragraphs so it appears below text on narrow screens;
+  // on wide screens, position:absolute pulls it to the right sidebar.
+  var featItems = null;
+  var featEl = null;
+  if (siteContent.featured) {
+    if (Array.isArray(siteContent.featured)) {
+      featItems = siteContent.featured;
+    } else if (siteContent.featured.text) {
+      featItems = [siteContent.featured];
+    }
+  }
+  if (featItems && featItems.length) {
+    var feat = document.createElement('div');
+    feat.className = 'featured-box';
+    // Newsletter link (above featured items)
+    var nlHtml = '';
+    if (siteContent.newsletter && siteContent.newsletter.url) {
+      nlHtml = '<div class="newsletter-link"><a href="' + esc(siteContent.newsletter.url) +
+        '" target="_blank">' + (siteContent.newsletter.text || 'Subscribe to our newsletter') +
+        ' &rarr;</a></div>';
+    }
+    feat.innerHTML = nlHtml + '<span class="featured-label">Featured</span>';
+    featItems.forEach(function(item) {
+      var div = document.createElement('div');
+      div.className = 'featured-item';
+      var html = '';
+      if (item.image) {
+        html += '<img class="featured-item-img" src="' + esc(item.image) + '" alt="">';
+      }
+      if (item.title) {
+        html += '<div class="featured-item-title">' + item.title + '</div>';
+      }
+      if (item.text) {
+        html += '<div class="featured-item-text">' + parseMarkers(item.text, false) + '</div>';
+      }
+      if (item.cta && item.link) {
+        html += '<a class="featured-item-cta" href="' + esc(item.link) + '" target="_blank">' + esc(item.cta) + ' &rarr;</a>';
+      } else if (item.link) {
+        html += '<a class="featured-item-cta" href="' + esc(item.link) + '" target="_blank">Learn more &rarr;</a>';
+      }
+      div.innerHTML = html;
+      feat.appendChild(div);
+    });
+    container.appendChild(feat);
+    featEl = feat;
+  }
+
+  // ── Align featured box with first paragraph on wide screens ──
+  // (called after all DOM insertions, including TL;DR button)
+  function alignFeatured() {
+    if (!featEl) return;
+    var firstPara = container.querySelector('.paragraph-block');
+    if (firstPara && window.innerWidth >= 1100) {
+      featEl.style.top = firstPara.offsetTop + 'px';
+    } else {
+      featEl.style.top = '';
+    }
+  }
+  window.addEventListener('resize', alignFeatured);
+
+  // ── Achievement tracker (inside featured box) ──
+  var achvTracker = document.createElement('div');
+  achvTracker.className = 'achv-tracker';
+  if (featEl) {
+    featEl.appendChild(achvTracker);
+  } else {
+    container.appendChild(achvTracker);
+  }
+
+  // ── Link buttons (Socials, YouTube, Podcasts, Companies, Books) ──
+  var addMuseumButton = null;
+  if (siteContent.socials && siteContent.socials.length) {
+    var platformNames = {
+      youtube: 'YouTube', instagram: 'Instagram', tiktok: 'TikTok',
+      bluesky: 'Bluesky', threads: 'Threads', twitter: 'Twitter',
+      x: 'X', mastodon: 'Mastodon', facebook: 'Facebook', linkedin: 'LinkedIn',
+      podcasts: 'Podcasts', companies: 'Companies', books: 'Books'
+    };
+    // Split into groups: dropdown buttons vs plain socials
+    var buttonOrder = ['youtube', 'podcasts', 'companies', 'books'];
+    var dropdownEntries = {};
+    var plainSocials = [];
+    siteContent.socials.forEach(function(s) {
+      if (buttonOrder.indexOf(s.platform) >= 0 && s.sublinks) {
+        dropdownEntries[s.platform] = s;
+      } else if (!s.sublinks) {
+        plainSocials.push(s);
+      }
+    });
+
+    var row = document.createElement('div');
+    row.className = 'socials-row';
+    var activePanel = null;
+    var activeBtn = null;
+
+    var clickedBtns = {};
+    var totalButtons = 1 + buttonOrder.filter(function(k) { return dropdownEntries[k]; }).length;
+
+    function closePanel() {
+      if (activePanel) { activePanel.remove(); activePanel = null; }
+      if (activeBtn) { activeBtn.classList.remove('open'); activeBtn = null; }
+    }
+
+    function makeButton(label, links) {
+      var wrap = document.createElement('div');
+      wrap.className = 'socials-wrap';
+      var btn = document.createElement('button');
+      btn.className = 'socials-btn';
+      btn.textContent = label;
+      wrap.appendChild(btn);
+      btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        clickedBtns[label] = true;
+        var allClicked = Object.keys(clickedBtns).length >= totalButtons;
+        if (allClicked) unlockAchievement('a-fan');
+        if (activeBtn === btn) { closePanel(); return; }
+        closePanel();
+        var panel = document.createElement('div');
+        panel.className = 'socials-panel';
+        links.forEach(function(lnk) {
+          var a = document.createElement('a');
+          a.href = lnk.url;
+          a.target = '_blank';
+          a.rel = 'noopener';
+          a.textContent = lnk.label;
+          panel.appendChild(a);
+        });
+        wrap.appendChild(panel);
+        activePanel = panel;
+        activeBtn = btn;
+        btn.classList.add('open');
+      });
+      return wrap;
+    }
+
+    // "Socials" button — plain social platforms
+    if (plainSocials.length) {
+      var socialLinks = plainSocials.map(function(s) {
+        return { label: platformNames[s.platform] || s.platform, url: s.url };
+      });
+      row.appendChild(makeButton('Socials', socialLinks));
+    }
+    // Dropdown buttons in order
+    buttonOrder.forEach(function(key) {
+      var entry = dropdownEntries[key];
+      if (entry) {
+        row.appendChild(makeButton(platformNames[key] || key, entry.sublinks));
+      }
+    });
+
+    // Museum of Former Projects — appears after "A Fan!" achievement
+    var museumLinks = siteContent.museum || [];
+    var museumAdded = false;
+    addMuseumButton = function() {
+      if (museumAdded) return;
+      museumAdded = true;
+      var wrap = makeButton('Museum of Former Projects', museumLinks);
+      row.appendChild(wrap);
+    };
+
+    document.addEventListener('click', closePanel);
+    container.appendChild(row);
+  }
+
+  // ═══════════════════════════════════════════
+  //  POPOVER SYSTEM
+  // ═══════════════════════════════════════════
+
+  var openPopovers = []; // { id, el, parentId }
+  var nextZ = 50;
+
+  function findPopover(fnId) {
+    for (var i = 0; i < openPopovers.length; i++) {
+      if (openPopovers[i].id === fnId) return openPopovers[i];
+    }
+    return null;
+  }
+
+  function closePopover(fnId, animate) {
+    // Gather this + all descendants
+    var toClose = [];
+    function gather(id) {
+      toClose.push(id);
+      openPopovers.forEach(function(p) {
+        if (p.parentId === id) gather(p.id);
+      });
+    }
+    gather(fnId);
+
+    toClose.forEach(function(id) {
+      var entry = findPopover(id);
+      if (!entry) return;
+      // Unmark ref
+      document.querySelectorAll('.fn-ref[data-fn="' + id + '"]').forEach(function(r) {
+        r.classList.remove('active');
+      });
+      if (animate !== false) {
+        entry.el.classList.add('closing');
+        setTimeout(function() { entry.el.remove(); }, 160);
+      } else {
+        entry.el.remove();
+      }
+      var idx = openPopovers.indexOf(entry);
+      if (idx >= 0) openPopovers.splice(idx, 1);
+    });
+
+    updateScrim();
+  }
+
+  function closeAll(animate) {
+    var ids = openPopovers.map(function(p) { return p.id; });
+    ids.forEach(function(id) { closePopover(id, animate); });
+  }
+
+  function updateScrim() {
+    scrim.classList.toggle('active', openPopovers.length > 0);
+  }
+
+  function openPopover(ref, fnId) {
+    var footnote = siteContent.footnotes[fnId];
+    if (!footnote) return;
+
+    // Is this ref inside an existing popover?
+    var parentPop = ref.closest('.fn-popover');
+    var parentId = parentPop ? parentPop.dataset.fn : null;
+
+    // If top-level (not inside a popover), close all existing
+    if (!parentId) {
+      closeAll(true);
+    }
+
+    // Calculate depth
+    var depth = 1;
+    if (parentId) {
+      var parentEntry = findPopover(parentId);
+      depth = parentEntry ? (parseInt(parentEntry.el.dataset.depth) + 1) : 2;
+    }
+    var depthClass = 'depth-' + (((depth-1)%7)+1);
+
+    // Build popover
+    var pop = document.createElement('div');
+    pop.className = 'fn-popover ' + depthClass;
+    pop.dataset.fn = fnId;
+    pop.dataset.depth = depth;
+    pop.style.zIndex = nextZ++;
+
+    var num = fnNumbers[fnId] || '?';
+
+    var arrow = document.createElement('div');
+    arrow.className = 'fn-arrow';
+
+    pop.innerHTML =
+      '<div class="fn-pop-header">' +
+        '<span class="fn-label">' + num + '</span>' +
+        '<button class="fn-close" aria-label="Close">&times;</button>' +
+      '</div>' +
+      '<div class="fn-pop-body">' + parseMarkers(footnote.content, true) + '</div>';
+
+    pop.insertBefore(arrow, pop.firstChild);
+
+    // Add to DOM hidden, measure, then position
+    pop.style.visibility = 'hidden';
+    pop.style.left = '0px';
+    pop.style.top = '0px';
+    document.body.appendChild(pop);
+
+    var popW = pop.offsetWidth;
+    var popH = pop.offsetHeight;
+    var refRect = ref.getBoundingClientRect();
+    var scrollT = window.pageYOffset || document.documentElement.scrollTop;
+    var scrollL = window.pageXOffset || document.documentElement.scrollLeft;
+    var vpW = window.innerWidth;
+
+    var gap = 12;
+    var above = true;
+
+    // Try above
+    var top = refRect.top + scrollT - popH - gap;
+    if (top < scrollT + 10) {
+      // Not enough room above, go below
+      top = refRect.bottom + scrollT + gap;
+      above = false;
+    }
+    // If below also off-screen, just go below anyway
+    var left = refRect.left + scrollL + (refRect.width / 2) - (popW / 2);
+    left = Math.max(scrollL + 8, Math.min(left, scrollL + vpW - popW - 8));
+
+    // Position arrow
+    var arrowLeftPx = refRect.left + scrollL + (refRect.width / 2) - left - 7;
+    arrowLeftPx = Math.max(14, Math.min(arrowLeftPx, popW - 28));
+    arrow.style.left = arrowLeftPx + 'px';
+
+    if (above) {
+      arrow.classList.add('arrow-down');
+      arrow.style.bottom = '-7px';
+    } else {
+      arrow.classList.add('arrow-up');
+      arrow.style.top = '-7px';
+    }
+
+    // Set transform-origin for animation
+    pop.style.transformOrigin = arrowLeftPx + 'px ' + (above ? 'bottom' : 'top');
+
+    pop.style.top = top + 'px';
+    pop.style.left = left + 'px';
+    pop.style.visibility = 'visible';
+
+    // Mark ref
+    ref.classList.add('active');
+
+    // Track
+    openPopovers.push({ id: fnId, el: pop, parentId: parentId });
+    updateScrim();
+
+    // Easter egg trigger
+    if (fnId === 'game1') {
+      startEasterEggGame();
+      unlockAchievement('warned-you');
+    }
+
+    // Achievement check
+    checkAchievements(fnId, depth);
+  }
+
+  // ── X-click tip tracker ──
+  var xClicks = 0;
+  var xTipShown = false;
+  var xClickTimer = null;
+
+  // ── Global click handler ──
+  document.addEventListener('click', function(e) {
+    // Close button inside popover
+    if (e.target.closest('.fn-close')) {
+      var pop = e.target.closest('.fn-popover');
+      if (pop) {
+        e.stopPropagation();
+        var remainAfter = openPopovers.length - 1;
+        closePopover(pop.dataset.fn, true);
+        // Track consecutive X clicks — only tip if more popovers remain
+        if (!xTipShown) {
+          xClicks++;
+          clearTimeout(xClickTimer);
+          xClickTimer = setTimeout(function() { xClicks = 0; }, 3000);
+          if (xClicks >= 2 && remainAfter > 0) {
+            xTipShown = true;
+            var tip = document.createElement('div');
+            tip.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);' +
+              'background:#2A2018;color:#fff;border-radius:12px;padding:0.8rem 1.3rem;z-index:9000;' +
+              'box-shadow:0 8px 32px rgba(0,0,0,0.25);font-family:-apple-system,BlinkMacSystemFont,system-ui,sans-serif;' +
+              'font-size:0.82rem;text-align:center;max-width:300px;line-height:1.5;' +
+              'animation:achvIn 0.35s cubic-bezier(0.34,1.56,0.64,1) forwards';
+            tip.textContent = 'Hey! FYI, you don\u2019t have to keep clicking the Xs \u2014 just click anywhere that isn\u2019t a footnote and they\u2019ll all go away.';
+            document.body.appendChild(tip);
+            setTimeout(function() {
+              tip.style.opacity = '0';
+              tip.style.transition = 'opacity 0.4s';
+              setTimeout(function() { tip.remove(); }, 400);
+            }, 4000);
+          }
+        }
+      }
+      return;
+    }
+
+    // Footnote ref clicked
+    var ref = e.target.closest('.fn-ref');
+    if (ref) {
+      e.preventDefault();
+      e.stopPropagation();
+      var fnId = ref.dataset.fn;
+      // Toggle if already open
+      if (findPopover(fnId)) {
+        closePopover(fnId, true);
+      } else {
+        openPopover(ref, fnId);
+      }
+      return;
+    }
+
+    // Click on scrim or outside everything → close all
+    if (!e.target.closest('.fn-popover')) {
+      closeAll(true);
+    }
+  });
+
+  // Escape key closes topmost popover
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && openPopovers.length) {
+      var last = openPopovers[openPopovers.length - 1];
+      closePopover(last.id, true);
+    }
+  });
+
+  // Stop popover clicks from bubbling to the close-all handler
+  // (already handled by stopPropagation in the fn-ref handler)
+
+  // ═══════════════════════════════════════════
+  //  EASTER EGG GAME
+  // ═══════════════════════════════════════════
+  var eggGame = { active: false, sprites: [], clicks: 0, animId: null };
+
+  function startEasterEggGame() {
+    if (eggGame.active) return;
+    eggGame.active = true;
+    eggGame.clicks = 0;
+    eggGame.sprites = [];
+    var src = 'hankhair.png';
+    for (var i = 0; i < 30; i++) spawnGameSprite(src);
+    eggGame.animId = requestAnimationFrame(tickGame);
+  }
+
+  function spawnGameSprite(src) {
+    var img = document.createElement('img');
+    img.src = src;
+    img.className = 'game-sprite';
+    var w = 100 + Math.floor(Math.random() * 201);
+    img.style.width = w + 'px';
+    img.style.height = 'auto';
+
+    var x = Math.random() * (window.innerWidth - w);
+    var y = Math.random() * (window.innerHeight - w);
+    var angle = Math.random() * Math.PI * 2;
+    var speed = 0.3 + Math.random() * 0.5;
+
+    var rotSpeed = (Math.random() - 0.5) * 1.2; // degrees per frame
+    var sprite = {
+      el: img, x: x, y: y,
+      vx: Math.cos(angle) * speed,
+      vy: Math.sin(angle) * speed,
+      w: w, rot: Math.random() * 360, rotSpeed: rotSpeed
+    };
+
+    img.style.left = x + 'px';
+    img.style.top = y + 'px';
+
+    img.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      clickGameSprite(sprite);
+    });
+
+    document.body.appendChild(img);
+    eggGame.sprites.push(sprite);
+  }
+
+  function clickGameSprite(sprite) {
+    sprite.el.style.transition = 'transform 0.3s ease, opacity 0.3s ease';
+    sprite.el.style.transform = 'rotate(' + sprite.rot + 'deg) scale(0)';
+    sprite.el.style.opacity = '0';
+    setTimeout(function() { sprite.el.remove(); }, 300);
+
+    var idx = eggGame.sprites.indexOf(sprite);
+    if (idx >= 0) eggGame.sprites.splice(idx, 1);
+
+    eggGame.clicks++;
+
+    // Every 2 clicks, spawn 1 new one (if sprites remain)
+    if (eggGame.clicks % 2 === 0 && eggGame.sprites.length > 0) {
+      spawnGameSprite('hankhair.png');
+    }
+
+    // Win condition
+    if (eggGame.sprites.length === 0) {
+      eggGame.active = false;
+      cancelAnimationFrame(eggGame.animId);
+      unlockAchievement('hank-destroyer');
+    }
+  }
+
+  function tickGame() {
+    if (!eggGame.active) return;
+    var vw = window.innerWidth;
+    var vh = window.innerHeight;
+
+    for (var i = 0; i < eggGame.sprites.length; i++) {
+      var s = eggGame.sprites[i];
+      s.x += s.vx;
+      s.y += s.vy;
+
+      // Bounce off edges
+      if (s.x <= 0) { s.x = 0; s.vx = Math.abs(s.vx); }
+      if (s.x >= vw - s.w) { s.x = vw - s.w; s.vx = -Math.abs(s.vx); }
+      if (s.y <= 0) { s.y = 0; s.vy = Math.abs(s.vy); }
+      if (s.y >= vh - s.w) { s.y = vh - s.w; s.vy = -Math.abs(s.vy); }
+
+      s.rot += s.rotSpeed;
+      s.el.style.left = s.x + 'px';
+      s.el.style.top = s.y + 'px';
+      s.el.style.transform = 'rotate(' + s.rot + 'deg)';
+    }
+
+    eggGame.animId = requestAnimationFrame(tickGame);
+  }
+
+  // ═══════════════════════════════════════════
+  //  ACHIEVEMENT SYSTEM
+  // ═══════════════════════════════════════════
+  var achv = {
+    unlocked: {},
+    openedSet: {},    // unique footnote IDs opened
+    openedCount: 0,
+    lastOpenTime: 0,
+    totalFootnotes: Object.keys(siteContent.footnotes).length,
+
+    defs: [
+      { id: 'rabbit-hole',   emoji: '\uD83D\uDC07', title: 'Rabbit Hole',
+        desc: 'Most people stop at two. You are not most people.' },
+      { id: 'deep-state',    emoji: '\uD83D\uDD75\uFE0F', title: 'Deep State',
+        desc: 'OK, you\u2019ve got TWO achievements now. Are there more?' },
+      { id: 'speed-clicker', emoji: '\u26A1', title: 'Speed Clicker',
+        desc: 'There\u2019s no way you read that footnote that fast.' },
+      { id: 'warned-you',    emoji: '\uD83D\uDEA8', title: 'Don\u2019t Say I Didn\u2019t Warn You',
+        desc: 'Look, I think we can all agree you did this to yourself.' },
+      { id: 'collector',     emoji: '\uD83D\uDCE6', title: 'Collector',
+        desc: 'Fifteen footnotes. You\u2019re building a collection.' },
+      { id: 'archivist',     emoji: '\uD83D\uDCDC', title: 'Archivist',
+        desc: 'I am both impressed and a little bit honored...' },
+      { id: 'chaos-agent',   emoji: '\uD83D\uDD25', title: 'Chaos Agent',
+        desc: 'YEAH!! GETTIN MESSY!!&!' },
+      { id: 'completionist', emoji: '\uD83C\uDFC6', title: 'Completionist',
+        desc: 'You found them all. Go outside. Tell someone what you\u2019ve done.' },
+      { id: 'hank-destroyer', emoji: '\uD83D\uDCA5', title: 'Hank Destroyer',
+        desc: 'Your destructive tendencies have been noted, catalogued, and sent to the authorities.' },
+      { id: 'geocities-activate', emoji: '\uD83E\uDDA9', title: 'GEOCITIES ACTIVATE!',
+        desc: 'You took the time to click the little pelican and this is your reward.' },
+      { id: 'a-fan', emoji: '\uD83D\uDC4B', title: 'A Fan!',
+        desc: 'Thanks for being interested in what I\u2019m up to.' },
+      { id: 'meta', emoji: '\uD83E\uDD2F', title: 'Now That\u2019s What I Call Meta',
+        desc: 'You just got an achievement for getting all of the achievements.' }
+    ],
+
+    queue: [],
+    showing: false
+  };
+
+  // Populate achievement tracker slots
+  achv.defs.forEach(function(def) {
+    var slot = document.createElement('div');
+    slot.className = 'achv-slot';
+    slot.setAttribute('data-achv', def.id);
+    slot.textContent = def.emoji;
+    achvTracker.appendChild(slot);
+  });
+
+  function unlockAchievement(id) {
+    if (achv.unlocked[id]) return;
+    achv.unlocked[id] = true;
+    var def = achv.defs.find(function(d) { return d.id === id; });
+    if (!def) return;
+    // Show tracker on first unlock, light up the slot
+    achvTracker.classList.add('visible');
+    var slot = achvTracker.querySelector('[data-achv="' + id + '"]');
+    if (slot) slot.classList.add('unlocked');
+    achv.queue.push(def);
+    if (!achv.showing) showNextAchievement();
+    // Show Museum of Former Projects after A Fan! unlocks
+    if (id === 'a-fan' && addMuseumButton) addMuseumButton();
+    // Trigger celebration on meta unlock
+    if (id === 'meta') metaCelebration();
+    // Meta: check if all non-meta achievements are unlocked
+    if (id !== 'meta') {
+      var allOthers = achv.defs.every(function(d) {
+        return d.id === 'meta' || achv.unlocked[d.id];
+      });
+      if (allOthers) unlockAchievement('meta');
+    }
+  }
+
+  function showNextAchievement() {
+    if (!achv.queue.length) { achv.showing = false; return; }
+    achv.showing = true;
+    var def = achv.queue.shift();
+
+    var toast = document.createElement('div');
+    toast.className = 'achv-toast';
+    toast.innerHTML =
+      '<div><span class="achv-title">' + def.title + '</span></div>' +
+      '<div class="achv-desc">' + def.desc + '</div>';
+    document.body.appendChild(toast);
+
+    // Confetti burst from the toast
+    spawnConfetti(toast);
+
+    setTimeout(function() {
+      toast.classList.add('out');
+      setTimeout(function() {
+        toast.remove();
+        showNextAchievement();
+      }, 400);
+    }, 2800);
+  }
+
+  function spawnConfetti(anchor) {
+    var rect = anchor.getBoundingClientRect();
+    var cx = rect.left + rect.width / 2;
+    var cy = rect.top + rect.height / 2;
+    var colors = ['#F05A00','#FF7A30','#FFD700','#FF4081','#00BCD4','#8BC34A','#9C27B0'];
+    var pieces = [];
+
+    for (var i = 0; i < 40; i++) {
+      var el = document.createElement('div');
+      el.className = 'confetti-piece';
+      var color = colors[Math.floor(Math.random() * colors.length)];
+      var w = 4 + Math.random() * 6;
+      var h = 4 + Math.random() * 8;
+      el.style.width = w + 'px';
+      el.style.height = h + 'px';
+      el.style.background = color;
+      el.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+      el.style.left = cx + 'px';
+      el.style.top = cy + 'px';
+      document.body.appendChild(el);
+
+      var angle = (Math.PI * 2 * i / 40) + (Math.random() - 0.5) * 0.8;
+      var speed = 3 + Math.random() * 5;
+      pieces.push({
+        el: el, x: cx, y: cy,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed - 2 - Math.random() * 3,
+        rot: Math.random() * 360,
+        rotV: (Math.random() - 0.5) * 15,
+        opacity: 1
+      });
+    }
+
+    var start = performance.now();
+    function tick(now) {
+      var dt = Math.min((now - start) / 16, 3);
+      start = now;
+      var alive = false;
+      for (var j = 0; j < pieces.length; j++) {
+        var p = pieces[j];
+        if (p.opacity <= 0) continue;
+        alive = true;
+        p.vy += 0.15 * dt; // gravity
+        p.x += p.vx * dt;
+        p.y += p.vy * dt;
+        p.rot += p.rotV * dt;
+        p.opacity -= 0.012 * dt;
+        if (p.opacity < 0) p.opacity = 0;
+        p.el.style.left = p.x + 'px';
+        p.el.style.top = p.y + 'px';
+        p.el.style.opacity = p.opacity;
+        p.el.style.transform = 'translate(-50%,-50%) rotate(' + p.rot + 'deg)';
+      }
+      if (alive) {
+        requestAnimationFrame(tick);
+      } else {
+        pieces.forEach(function(pp) { pp.el.remove(); });
+      }
+    }
+    requestAnimationFrame(tick);
+  }
+
+  // ── Meta celebration: page dance + bean rain ──
+  function metaCelebration() {
+    document.body.classList.add('dancing');
+    var beans = [];
+    var beanInterval = setInterval(function() {
+      var el = document.createElement('img');
+      el.src = 'small-beab.png';
+      el.className = 'bean';
+      var size = 20 + Math.random() * 25;
+      el.style.width = size + 'px';
+      el.style.height = 'auto';
+      var startX = Math.random() * window.innerWidth;
+      el.style.left = startX + 'px';
+      el.style.top = '-40px';
+      document.body.appendChild(el);
+      beans.push({
+        el: el,
+        x: startX,
+        y: -40,
+        vy: 1.5 + Math.random() * 2.5,
+        vx: (Math.random() - 0.5) * 1.5,
+        rot: Math.random() * 360,
+        rotV: (Math.random() - 0.5) * 8
+      });
+    }, 40);
+
+    var beanAnimId;
+    function tickBeans() {
+      for (var i = beans.length - 1; i >= 0; i--) {
+        var b = beans[i];
+        b.y += b.vy;
+        b.vy += 0.08;
+        b.x += b.vx;
+        b.rot += b.rotV;
+        b.el.style.top = b.y + 'px';
+        b.el.style.left = b.x + 'px';
+        b.el.style.transform = 'rotate(' + b.rot + 'deg)';
+        if (b.y > window.innerHeight + 50) {
+          b.el.remove();
+          beans.splice(i, 1);
+        }
+      }
+      beanAnimId = requestAnimationFrame(tickBeans);
+    }
+    beanAnimId = requestAnimationFrame(tickBeans);
+
+    // Stop after 5 seconds
+    setTimeout(function() {
+      clearInterval(beanInterval);
+      document.body.classList.remove('dancing');
+      setTimeout(function() {
+        cancelAnimationFrame(beanAnimId);
+        beans.forEach(function(b) { b.el.remove(); });
+        beans = [];
+      }, 3000);
+    }, 5000);
+  }
+
+  // ── Secret code: type 132435 to trigger meta ──
+  var cheatCode = '132435';
+  var cheatBuf = '';
+  var cheatTimer = null;
+  document.addEventListener('keydown', function(e) {
+    if (e.key >= '0' && e.key <= '9') {
+      cheatBuf += e.key;
+      clearTimeout(cheatTimer);
+      cheatTimer = setTimeout(function() { cheatBuf = ''; }, 3000);
+      if (cheatBuf === cheatCode) {
+        cheatBuf = '';
+        // Unlock all non-meta achievements silently, then trigger meta
+        achv.defs.forEach(function(d) {
+          if (d.id !== 'meta') {
+            if (!achv.unlocked[d.id]) {
+              achv.unlocked[d.id] = true;
+              achvTracker.classList.add('visible');
+              var slot = achvTracker.querySelector('[data-achv="' + d.id + '"]');
+              if (slot) slot.classList.add('unlocked');
+            }
+          }
+        });
+        unlockAchievement('meta');
+      }
+      if (cheatBuf.length > cheatCode.length) cheatBuf = cheatBuf.slice(-cheatCode.length);
+    }
+  });
+
+  function checkAchievements(fnId, depth) {
+    var now = performance.now();
+
+    // Track unique opens
+    if (!achv.openedSet[fnId]) {
+      achv.openedSet[fnId] = true;
+      achv.openedCount++;
+    }
+
+    // Rabbit Hole: depth 3
+    if (depth >= 3) unlockAchievement('rabbit-hole');
+
+    // Deep State: depth 6
+    if (depth >= 6) unlockAchievement('deep-state');
+
+    // Speed Clicker: < 400ms between opens
+    if (achv.lastOpenTime && (now - achv.lastOpenTime) < 800) {
+      unlockAchievement('speed-clicker');
+    }
+    achv.lastOpenTime = now;
+
+    // Collector: 15 unique
+    if (achv.openedCount >= 15) unlockAchievement('collector');
+
+    // Archivist: 40 unique
+    if (achv.openedCount >= 40) unlockAchievement('archivist');
+
+    // Chaos Agent: 8+ popovers open at once
+    if (openPopovers.length >= 8) unlockAchievement('chaos-agent');
+
+    // Completionist: every footnote opened
+    if (achv.openedCount >= achv.totalFootnotes) unlockAchievement('completionist');
+  }
+
+  // ═══════════════════════════════════════════
+  //  ACCOLADES SLIDESHOW
+  // ═══════════════════════════════════════════
+  (function() {
+    if (!siteContent.accolades || !siteContent.accolades.length) return;
+
+    var accolades = siteContent.accolades;
+    var currentSlide = 0;
+    var transitioning = false;
+
+    // Build overlay
+    var overlay = document.createElement('div');
+    overlay.className = 'accolades-overlay';
+    overlay.id = 'accolades-overlay';
+
+    var card = document.createElement('div');
+    card.className = 'accolades-card';
+
+    var closeBtn = document.createElement('button');
+    closeBtn.className = 'accolades-close';
+    closeBtn.innerHTML = '&times;';
+    closeBtn.setAttribute('aria-label', 'Close');
+
+    var label = document.createElement('span');
+    label.className = 'accolades-label';
+    label.textContent = 'TL;DR';
+
+    var slide = document.createElement('div');
+    slide.className = 'accolades-slide';
+    slide.id = 'accolades-slide';
+
+    var nav = document.createElement('div');
+    nav.className = 'accolades-nav';
+
+    var prevBtn = document.createElement('button');
+    prevBtn.className = 'accolades-arrow';
+    prevBtn.innerHTML = '&#8592;';
+    prevBtn.setAttribute('aria-label', 'Previous');
+
+    var dotsWrap = document.createElement('div');
+    dotsWrap.className = 'accolades-dots';
+
+    var nextBtn = document.createElement('button');
+    nextBtn.className = 'accolades-arrow';
+    nextBtn.innerHTML = '&#8594;';
+    nextBtn.setAttribute('aria-label', 'Next');
+
+    // Build dots
+    var dots = [];
+    accolades.forEach(function(_, i) {
+      var dot = document.createElement('button');
+      dot.className = 'accolades-dot' + (i === 0 ? ' active' : '');
+      dot.setAttribute('aria-label', 'Go to slide ' + (i + 1));
+      dot.addEventListener('click', function() { goToSlide(i); });
+      dotsWrap.appendChild(dot);
+      dots.push(dot);
+    });
+
+    nav.appendChild(prevBtn);
+    nav.appendChild(dotsWrap);
+    nav.appendChild(nextBtn);
+
+    card.appendChild(closeBtn);
+    card.appendChild(label);
+    card.appendChild(slide);
+    card.appendChild(nav);
+    overlay.appendChild(card);
+    document.body.appendChild(overlay);
+
+    function renderSlide(index) {
+      var a = accolades[index];
+      slide.innerHTML =
+        (a.year ? '<span class="accolades-year">' + a.year + '</span>' : '') +
+        '<div class="accolades-title">' + a.title + '</div>' +
+        '<div class="accolades-detail">' + a.detail + '</div>' +
+        (a.link ? '<a class="accolades-link" href="' + a.link.replace(/"/g,'&quot;') + '" target="_blank">' + (a.linkText || 'Learn more') + ' &rarr;</a>' : '');
+      dots.forEach(function(d, i) {
+        d.classList.toggle('active', i === index);
+      });
+    }
+
+    function goToSlide(index, direction) {
+      if (transitioning || index === currentSlide) return;
+      transitioning = true;
+
+      var dir = direction || (index > currentSlide ? 'left' : 'right');
+      slide.classList.add(dir === 'left' ? 'slide-out-left' : 'slide-out-right');
+
+      setTimeout(function() {
+        currentSlide = index;
+        renderSlide(currentSlide);
+        slide.classList.remove('slide-out-left', 'slide-out-right');
+        slide.classList.add('slide-in');
+
+        // Force reflow, then let CSS defaults (opacity:1, translateX(0)) take over
+        void slide.offsetWidth;
+        slide.classList.remove('slide-in');
+
+        setTimeout(function() { transitioning = false; }, 50);
+      }, 220);
+    }
+
+    prevBtn.addEventListener('click', function() {
+      var prev = (currentSlide - 1 + accolades.length) % accolades.length;
+      goToSlide(prev, 'right');
+    });
+
+    nextBtn.addEventListener('click', function() {
+      var next = (currentSlide + 1) % accolades.length;
+      goToSlide(next, 'left');
+    });
+
+    // Keyboard navigation
+    overlay.addEventListener('keydown', function(e) {
+      if (e.key === 'ArrowLeft') { prevBtn.click(); e.preventDefault(); }
+      if (e.key === 'ArrowRight') { nextBtn.click(); e.preventDefault(); }
+      if (e.key === 'Escape') { closeOverlay(); e.preventDefault(); }
+    });
+
+    // Touch/swipe support
+    var touchStartX = 0;
+    var touchStartY = 0;
+    card.addEventListener('touchstart', function(e) {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    }, { passive: true });
+    card.addEventListener('touchend', function(e) {
+      var dx = e.changedTouches[0].clientX - touchStartX;
+      var dy = e.changedTouches[0].clientY - touchStartY;
+      if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) {
+        if (dx < 0) nextBtn.click();
+        else prevBtn.click();
+      }
+    }, { passive: true });
+
+    // Close overlay
+    function closeOverlay() {
+      overlay.classList.remove('active');
+    }
+    closeBtn.addEventListener('click', closeOverlay);
+    overlay.addEventListener('click', function(e) {
+      if (e.target === overlay) closeOverlay();
+    });
+
+    // Open overlay
+    function openOverlay() {
+      currentSlide = 0;
+      renderSlide(0);
+      overlay.classList.add('active');
+      overlay.focus();
+    }
+
+    // Add "TL;DR" button above the bio text
+    var accoladesBtn = document.createElement('button');
+    accoladesBtn.className = 'accolades-btn';
+    accoladesBtn.textContent = 'TL;DR';
+    accoladesBtn.addEventListener('click', openOverlay);
+
+    // Insert before the first paragraph block
+    var firstPara = container.querySelector('.paragraph-block');
+    if (firstPara) {
+      container.insertBefore(accoladesBtn, firstPara);
+    } else {
+      container.insertBefore(accoladesBtn, container.firstChild);
+    }
+
+    // Now that the button is in the DOM, align the featured sidebar
+    alignFeatured();
+
+    // Also close on Escape globally
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && overlay.classList.contains('active')) {
+        closeOverlay();
+      }
+    });
+
+    renderSlide(0);
+  })();
+
+  // ═══════════════════════════════════════════
+  //  GEOCITIES MODE
+  // ═══════════════════════════════════════════
+  var geoActive = false;
+  var geoElements = [];
+
+  // Guestbook entries
+  var gbEntries = [
+    { name: 'Dave', date: 'Jan 1, 1999', msg: 'First!!!! This is my favorite website on the entire World Wide Web.' },
+    { name: 'MarsGirl2001', date: 'Feb 3, 1999', msg: 'Hank - loved your Mars page!! I bookmarked it. Keep up the good work!' },
+    { name: 'xXDarkAngelXx', date: 'Mar 18, 1999', msg: 'cool page!! PLEASE SIGN MY GUESTBOOK TOO!! www.geocities.com/TimesSquare/4892' },
+    { name: 'Dave', date: 'Apr 2, 1999', msg: 'Dave again. Still checking in every day. Updated my bookmarks folder to put you at the top.' },
+    { name: 'anonymous', date: 'Apr 20, 1999', msg: 'nice page but the star background makes it hard to read. also your visitor counter seems broken, it said 47 yesterday and now it says 12,847??' },
+    { name: 'AstroNerd', date: 'May 15, 1999', msg: 'Found this through AltaVista searching for mars exploration. Not disappointed!' },
+    { name: 'Tommy, age 11', date: 'Jun 22, 1999', msg: 'i think this is the best website ive ever seen and ive been on the internet for almost a whole year now' },
+    { name: 'Dave', date: 'Jul 4, 1999', msg: 'Happy 4th everyone! Hank if you ever need someone to help moderate this guestbook I am available 24/7. I have DSL now so I am always online.' },
+    { name: 'SurfDude99', date: 'Aug 9, 1999', msg: 'Found this through the webring. Radical!!! Added you to my links page.' },
+    { name: 'Dave', date: 'Dec 31, 1999', msg: 'Stocking up on canned goods for Y2K but wanted to sign one more time just in case the internet goes away forever. It has been an honor. -Dave' }
+  ];
+
+  function buildGuestbook() {
+    var overlay = document.createElement('div');
+    overlay.className = 'geo-gb-overlay';
+    overlay.id = 'geo-guestbook';
+    var popup = document.createElement('div');
+    popup.className = 'geo-gb-popup';
+    // Title bar
+    popup.innerHTML = '<div class="geo-gb-titlebar"><span>HANK\'S GUESTBOOK</span><button class="geo-gb-close" id="geo-gb-close">X</button></div>';
+    // Body with entries
+    var body = document.createElement('div');
+    body.className = 'geo-gb-body';
+    body.id = 'geo-gb-body';
+    gbEntries.forEach(function(e) {
+      var entry = document.createElement('div');
+      entry.className = 'geo-gb-entry';
+      entry.innerHTML = '<span class="gb-name">' + e.name + '</span> <span class="gb-date">' + e.date + '</span><div class="gb-msg">' + e.msg + '</div>';
+      body.appendChild(entry);
+    });
+    popup.appendChild(body);
+    // Form
+    var form = document.createElement('div');
+    form.className = 'geo-gb-form';
+    form.id = 'geo-gb-form';
+    form.innerHTML = '<div style="padding:0.5rem;text-align:center;color:#cc0000;font-weight:700;font-size:0.78rem;line-height:1.6;">' +
+      '<img src="https://web.archive.org/web/2009/http://www.geocities.com/SiliconValley/Campus/8757/construct2.gif" alt="" style="width:32px;height:32px;vertical-align:middle;image-rendering:pixelated;" onerror="this.style.display=\'none\'">' +
+      ' GUESTBOOK INPUT CURRENTLY BROKEN <img src="https://web.archive.org/web/2009/http://www.geocities.com/SiliconValley/Campus/8757/construct2.gif" alt="" style="width:32px;height:32px;vertical-align:middle;image-rendering:pixelated;" onerror="this.style.display=\'none\'"><br>' +
+      '<span style="font-size:0.68rem;color:#666;font-weight:400;">My friend Dave is working on fixing it. Please check back soon!<br>' +
+      'In the meantime you can email your guestbook entry to hank@angelfire.com</span></div>';
+    popup.appendChild(form);
+    overlay.appendChild(popup);
+    document.body.appendChild(overlay);
+    // Close button
+    document.getElementById('geo-gb-close').addEventListener('click', function() {
+      overlay.classList.remove('active');
+    });
+    overlay.addEventListener('click', function(ev) {
+      if (ev.target === overlay) overlay.classList.remove('active');
+    });
+    return overlay;
+  }
+
+  document.getElementById('geo-toggle').addEventListener('click', function(e) {
+    e.stopPropagation();
+    geoActive = !geoActive;
+    document.body.classList.toggle('geocities', geoActive);
+    if (geoActive) unlockAchievement('geocities-activate');
+
+    if (geoActive) {
+      // Swap site photo to hankhair.png
+      var sitePhotoEl = document.querySelector('.site-photo');
+      if (sitePhotoEl) {
+        sitePhotoEl._origSrc = sitePhotoEl.src;
+        sitePhotoEl.src = 'hankhair.png';
+      }
+
+      // Rainbow marquee
+      var marquee = document.createElement('div');
+      marquee.className = 'geo-marquee';
+      marquee.innerHTML = '<span>~*~*~ Welcome to HANK\'S HOMEPAGE ~*~*~ Best viewed in Netscape Navigator 4.0 at 800x600 ~*~*~ Last updated: January 15, 1999 ~*~*~ DFTBA!! ~*~*~</span>';
+      document.body.appendChild(marquee);
+      geoElements.push(marquee);
+
+      // Under construction (inserted at top of content)
+      var construction = document.createElement('div');
+      construction.className = 'geo-construction';
+      construction.textContent = '\uD83D\uDEA7 !! UNDER CONSTRUCTION !! \uD83D\uDEA7';
+      container.insertBefore(construction, container.firstChild);
+      geoElements.push(construction);
+
+      // Visitor counter + guestbook link
+      var counter = document.createElement('div');
+      counter.className = 'geo-counter';
+      var num = 10000 + Math.floor(Math.random() * 89999);
+      counter.innerHTML = 'You are visitor number <span class="counter-num">' + num +
+        '</span><br><a href="#" id="geo-gb-link">Sign my guestbook!</a>';
+      document.body.appendChild(counter);
+      geoElements.push(counter);
+
+      // Build guestbook
+      var gb = buildGuestbook();
+      geoElements.push(gb);
+
+      // Wire link
+      document.getElementById('geo-gb-link').addEventListener('click', function(ev) {
+        ev.preventDefault();
+        document.getElementById('geo-guestbook').classList.add('active');
+      });
+    } else {
+      // Restore site photo
+      var sitePhotoEl = document.querySelector('.site-photo');
+      if (sitePhotoEl && sitePhotoEl._origSrc) sitePhotoEl.src = sitePhotoEl._origSrc;
+
+      geoElements.forEach(function(el) { el.remove(); });
+      geoElements = [];
+    }
+  });
+
+
+})();
+</script>
+<script defer src="/_vercel/insights/script.js"></script>
+<script defer src="/_vercel/speed-insights/script.js"></script>
+</body>
+</html>
 
